@@ -1,6 +1,20 @@
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function About() {
+    const router = useRouter();
+    const isLogin = false;
+    const handleLogin = () => {
+        if(isLogin){
+            router.push("/about/address");
+        }
+        else{
+            router.push("/")
+        }
+    }
+
   return (
     <div className="p-4 text-center">
       <h1 className="text-2xl font-bold mb-4">About Us</h1>
@@ -10,7 +24,7 @@ export default function About() {
       <p>
         Our mission is to create user-friendly and efficient software solutions that meet the needs of our clients.
       </p>
-        <p className="mt-4">Learn more about our <a href="/about/address" className="text-blue-500 underline">address</a>.</p>
+        <p className="mt-4">Learn more about our <button onClick={handleLogin} className="text-blue-500 underline">address</button>.</p>
     </div>
   );
 }
