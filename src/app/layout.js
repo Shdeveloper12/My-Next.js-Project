@@ -23,16 +23,16 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="h-screen h-max-[600px]">
+        <main className="flex-grow">
            {children}
         </main>
        
         <footer className="text-center p-4 bg-gray-50 dark:bg-gray-800">
           <p>© 2023 My Next.js App</p>
         </footer>
-        
-          
+      </div>
       </body>
     </html>
   );
