@@ -2,7 +2,9 @@ import React from "react";
 
 export default function Details({params}){
     const { id } = params;
-    
+    if (!id) {
+        return <div className="text-center">No ID provided</div>;
+    }
     const services = [
     {
       "id": 1,
@@ -39,10 +41,10 @@ export default function Details({params}){
     return(
 
         <div className="text-center border border-green-400 p-4 m-2">
-            <img src={singleData.image} alt={singleData.name} className="w-80 h-auto mx-auto " />
+            <img src={singleData?.image} alt={singleData?.name} className="w-80 h-auto mx-auto " />
             <h1>Id: {id}</h1>
-            <h1>Name: {singleData.name}</h1>
-            <p>{singleData.details}</p>
+            <h1>Name: {singleData?.name}</h1>
+            <p>{singleData?.details}</p>
         </div>
     )
 
