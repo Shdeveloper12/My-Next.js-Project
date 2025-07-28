@@ -5,7 +5,7 @@ import React from "react";
 
 export default function About() {
     const router = useRouter();
-    const isLogin = false;
+    const isLogin = true;
     const handleLogin = () => {
         if(isLogin){
             router.push("/about/address");
