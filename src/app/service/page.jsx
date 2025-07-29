@@ -1,6 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+ export const metadata = {
+  title: "Service | Next.js App",
+  description: "Explore our range of services.",
+
+};
 export default function Service() {
      const services = [
     {
@@ -45,7 +51,7 @@ export default function Service() {
                             <div key={service.id} className="border p-4 m-2 text-center space-y-2">
                                 <h2>ID: {service.id}</h2>
                                 <h3>Name: {service.name}</h3>
-                                <img src={service.image} alt={service.name} className="w-80 h-auto mx-auto" />
+                                <Image width={500} height={300} src={service.image} alt={service.name} className="w-80 h-auto mx-auto" />
                                 <p>{service.details}</p>
                                 <Link className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href={`/service/${service.id}`}>Service Details</Link>
                             </div>

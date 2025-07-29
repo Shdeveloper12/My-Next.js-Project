@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+ export const metadata = {
+  title: "Posts | Next.js App",
+  description: "Read our latest posts.",
+
+};
 export const getPosts = async () => {
     const res = await fetch('https://jsonplaceholder.typicode.com/posts')
     const data = await res.json()

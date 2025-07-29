@@ -1,5 +1,13 @@
 import React from "react";
+export async function generateMetadata({ params}) {
+  const id = (await params).id;
 
+
+  return {
+    title: `Service Details | ${id}`,
+    description: `Learn more about our ${id} service.`,
+  }
+}
 export default function Details({params}){
     const { id } = params;
     if (!id) {
