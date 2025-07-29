@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import {  Roboto } from "next/font/google";
+
+const roboto = Roboto({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+   subsets: ['latin']
+});
 
  export const metadata = {
   title: "Service | Next.js App",
@@ -41,7 +47,7 @@ export default function Service() {
     }
   ]
     return(
-            <div className="text-center">
+            <div className={`p-4 text-center ${roboto.className}`}>
                 <h1>Service</h1>
 
                 <p>Explore our range of services designed to meet your needs.</p>
