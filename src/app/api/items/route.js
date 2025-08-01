@@ -1,4 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
+import { revalidatePath } from "next/cache";
 
 // This function handles GET requests to the API route
 export async function GET(req) {
@@ -17,7 +18,7 @@ export async function POST(req) {
   try {
     const postData = await req.json();
     const result = await dbConnect("items").insertOne(postData);
-
+    
     return Response.json({ 
       result, 
       insertedId: result.insertedId,

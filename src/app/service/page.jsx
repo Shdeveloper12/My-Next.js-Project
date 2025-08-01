@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import {  Roboto } from "next/font/google";
 
+
 const roboto = Roboto({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
    subsets: ['latin']
@@ -13,56 +14,29 @@ const roboto = Roboto({
   description: "Explore our range of services.",
 
 };
-export default function Service() {
-     const services = [
-    {
-      "id": 1,
-      "name": "Wireless Headphones",
-      "image": "https://picsum.photos/id/1080/300/200",
-      "details": "Noise-cancelling Bluetooth headphones with 30hr battery"
-    },
-    {
-      "id": 2,
-      "name": "Smart Watch",
-      "image": "https://picsum.photos/id/119/300/200",
-      "details": "Fitness tracker with heart rate monitor and GPS"
-    },
-    {
-      "id": 3,
-      "name": "VR Headset",
-      "image": "https://picsum.photos/id/106/300/200",
-      "details": "Immersive virtual reality experience with motion tracking"
-    },
-    {
-      "id": 4,
-      "name": "DSLR Camera",
-      "image": "https://picsum.photos/id/250/300/200",
-      "details": "24MP sensor with 4K video recording"
-    },
-    {
-      "id": 5,
-      "name": "Gaming Laptop",
-      "image": "https://picsum.photos/id/180/300/200",
-      "details": "RTX 4070, 32GB RAM, 1TB SSD"
-    }
-  ]
+
+export const dynamic = "force-dynamic";
+
+export default async function Service() {
+  const {NEXT_PUBLIC_SERVER_ADDRESS} = process.env;
+  const  res = await fetch(`${NEXT_PUBLIC_SERVER_ADDRESS}/api/items`);
+  const data = await res.json();
+
+
     return(
             <div className={`p-4 text-center ${roboto.className}`}>
                 <h1>Service</h1>
 
                 <p>Explore our range of services designed to meet your needs.</p>
                 <div>
-                    {
-                        services.map((service) => (
-                            <div key={service.id} className="border p-4 m-2 text-center space-y-2">
-                                <h2>ID: {service.id}</h2>
-                                <h3>Name: {service.name}</h3>
-                                <Image width={500} height={300} src={service.image} alt={service.name} className="w-80 h-auto mx-auto" />
-                                <p>{service.details}</p>
-                                <Link className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href={`/service/${service.id}`}>Service Details</Link>
-                            </div>
-                        ))
-                    }
+                    {data.items.map((item) => (
+                        <div key={item._id} className="border p-4 m-2">
+                          
+                            <h2 className="text-xl font-bold">{item.name}</h2>
+                            <p>{item.description}</p>
+                            <Link href={`/service/${item._id}`} className="text-blue-500 hover:underline">View Details</Link>
+                        </div>
+                    ))}
                 </div>
                 
             </div>
