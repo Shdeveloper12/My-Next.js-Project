@@ -2,6 +2,9 @@
 import { usePathname } from "next/navigation";
 import React, { use } from "react";
 
+import LoginButton from "./LoginButton";
+
+
 export default function Navbar() {
     const pathName = usePathname();
     console.log(pathName, pathName.includes("dashboard"));
@@ -15,7 +18,8 @@ export default function Navbar() {
         <li><a href="/service">Service</a></li>
         <li><a href="/posts">Posts</a></li>
         <li><a href="/contact">Contact</a></li>
-        <li><a href="/login">Login</a></li>
+        <li><LoginButton /></li>
+        <li><a href="/register">Register</a></li>
       </ul>
     </nav>
   ); 
