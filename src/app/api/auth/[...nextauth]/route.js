@@ -1,3 +1,4 @@
+import dbConnect from "@/lib/dbConnect";
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 export const authOptions = {
@@ -6,23 +7,61 @@ export const authOptions = {
    
     name: 'Credentials',
     credentials: {
-      username: { label: "Username", type: "text", placeholder: "jsmith" },
+      name: { label: "Name", type: "text", placeholder: "jsmith" },
       password: { label: "Password", type: "password" },
       email: { label: "Email", type: "email", placeholder: "jsmith@example.com" }
     },
     async authorize(credentials, req) {
+      try {
+        const { name, email, password } = credentials;
+        
+        // Connect to database and find user
+        const usersCollection = dbConnect("users");
+        const user = await usersCollection.findOne({ email, name });
 
-    const user = { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
+        // Check if user exists and password matches
+        const isPasswordMatch = user && user.password === password;
+        if (!user || !isPasswordMatch) {
+          return null;
+        }
 
-      // If no error and we have user data, return it
-      if (user) {
-        return user
+        // Return user object with role
+        return { 
+          id: user._id.toString(), 
+          name: user.name, 
+          email: user.email, 
+          role: user.role 
+        };
+      } catch (error) {
+        console.error("Authentication error:", error);
+        return null;
       }
-      // Return null if user data could not be retrieved
-      return null
     }
   })
-]
+],
+callbacks : {
+    async jwt({ token, user }) {
+      
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.role = user.role 
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      
+      if (token) {
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.role = token.role;
+      }
+      return session;
+    }
+
+}
 }
 const handler = NextAuth(authOptions)
 
