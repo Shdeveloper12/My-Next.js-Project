@@ -10,7 +10,7 @@ export default async function Home() {
   return (
   <div className="text-center text-4xl mt-12">
     <h1>Welcome to My Next.js App</h1>
-    <LoginButton></LoginButton>
+
     <UserInfo></UserInfo>
     <p className="mt-4 text-lg">Session: {JSON.stringify(session)}</p>
 
