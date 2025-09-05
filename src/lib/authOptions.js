@@ -1,8 +1,9 @@
 import dbConnect, { collectionNames } from "@/lib/dbConnect";
 import CredentialsProvider from "next-auth/providers/credentials"
-
+import GoogleProvider from "next-auth/providers/google";
 export const authOptions = {
     providers: [
+        
   CredentialsProvider({
    
     name: 'Credentials',
@@ -37,6 +38,10 @@ export const authOptions = {
         return null;
       }
     }
+  }),
+   GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET
   })
 ],
 callbacks : {
