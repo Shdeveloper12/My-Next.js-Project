@@ -1,23 +1,23 @@
+import { getToken } from 'next-auth/jwt'
 import { NextResponse } from 'next/server'
 
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request) {
-    // const currentCookie = request.cookies.get('nextjs-token')
+export const  middleware = async (req) => {
+    // const currentCookie = req.cookies.get('nextjs-token')
     // if (!currentCookie) {
     //     // If the token is not present, redirect to the login page
-    //     return NextResponse.redirect(new URL('/login', request.url))
+    //     return NextResponse.redirect(new URL('/login', req.url))
     // }
-    const dummyUserData = {
-        role: 'admin',
-        email: 'test@example.com',
+    const token = await getToken({req});
+    console.log("Token", token)
+    const isTokenOk = Boolean(token)
+    const isAdminUser = token?.role === 'admin'
+
+    const isAuthPage = req.nextUrl.pathname.startsWith('/service/add') || req.nextUrl.pathname.startsWith('/register')
+    if (isAuthPage && !isAdminUser) {
+        return NextResponse.redirect(new URL('/api/auth/signin', req.url))
     }
-    let isServicePage = request.nextUrl.pathname.startsWith("/service")
-    let isAdmin = dummyUserData.role == 'admin'
-    if (isServicePage && !isAdmin) 
-        return NextResponse.redirect(new URL('/', request.url))
-       
-    
-        return NextResponse.next()
+   return NextResponse.next()
 }
 

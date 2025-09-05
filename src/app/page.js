@@ -1,8 +1,7 @@
 import Image from "next/image";
 import LoginButton from "./components/LoginButton";
 import UserInfo from "./components/UserInfo";
-
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
 
 
