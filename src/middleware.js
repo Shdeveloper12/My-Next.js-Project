@@ -16,8 +16,11 @@ export const  middleware = async (req) => {
 
     const isAuthPage = req.nextUrl.pathname.startsWith('/service/add') || req.nextUrl.pathname.startsWith('/register')
     if (isAuthPage && !isAdminUser) {
-        return NextResponse.redirect(new URL('/api/auth/signin', req.url))
+        const callBackUrl = req.nextUrl.pathname
+        return NextResponse.redirect(new URL(`/api/auth/signin?callbackUrl=${callBackUrl}`, req.url))
     }
+    
+   
    return NextResponse.next()
 }
 
