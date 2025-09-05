@@ -1,67 +1,94 @@
 import dbConnect, { collectionNames } from "@/lib/dbConnect";
-import CredentialsProvider from "next-auth/providers/credentials"
+import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 export const authOptions = {
-    providers: [
-        
-  CredentialsProvider({
-   
-    name: 'Credentials',
-    credentials: {
-      name: { label: "Name", type: "text", placeholder: "jsmith" },
-      password: { label: "Password", type: "password" },
-      email: { label: "Email", type: "email", placeholder: "jsmith@example.com" }
-    },
-    async authorize(credentials, req) {
-      try {
-        const { name, email, password } = credentials;
-        
-        // Connect to database and find user
-        const usersCollection = dbConnect(collectionNames.users);
-        const user = await usersCollection.findOne({ email, name });
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        name: { label: "Name", type: "text", placeholder: "jsmith" },
+        password: { label: "Password", type: "password" },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "jsmith@example.com",
+        },
+      },
+      async authorize(credentials, req) {
+        try {
+          const { name, email, password } = credentials;
 
-        // Check if user exists and password matches
-        const isPasswordMatch = user && user.password === password;
-        if (!user || !isPasswordMatch) {
+          // Connect to database and find user
+          const usersCollection = dbConnect(collectionNames.users);
+          const user = await usersCollection.findOne({ email, name });
+
+          // Check if user exists and password matches
+          const isPasswordMatch = user && user.password === password;
+          if (!user || !isPasswordMatch) {
+            return null;
+          }
+
+          // Return user object with role
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error("Authentication error:", error);
           return null;
         }
-
-        // Return user object with role
-        return { 
-          id: user._id.toString(), 
-          name: user.name, 
-          email: user.email, 
-          role: user.role 
-        };
+      },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
+  ],
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      try {
+        if (account) {
+          const { providerAccountId, provider } = account;
+          const { email, name, picture } = profile;
+          const payload = {
+            providerAccountId,
+            provider,
+            email,
+            name,
+            image: picture,
+            role: "user",
+          };
+          const usersCollection = dbConnect(collectionNames.users);
+          let existingUser = await usersCollection.findOne({ providerAccountId });
+          if (!existingUser) {
+            await usersCollection.insertOne(payload);
+          }
+          console.log("SignIn payload:", payload);
+        }
       } catch (error) {
-        console.error("Authentication error:", error);
-        return null;
+        console.error("Error during signIn:", error);
+        return false;
       }
-    }
-  }),
-   GoogleProvider({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET
-  }),
-   GitHubProvider({
-    clientId: process.env.GITHUB_ID,
-    clientSecret: process.env.GITHUB_SECRET
-  })
-],
-callbacks : {
+      return true;
+    },
+
     async jwt({ token, user }) {
-      
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
-        token.role = user.role 
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      
       if (token) {
         session.user.id = token.id;
         session.user.name = token.name;
@@ -69,7 +96,6 @@ callbacks : {
         session.user.role = token.role;
       }
       return session;
-    }
-
-}
-}
+    },
+  },
+};
